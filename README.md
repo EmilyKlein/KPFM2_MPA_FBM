@@ -1,7 +1,7 @@
 # KPFM2_MPA_FBM ~ READ ME and ANALYSIS GUIDE: Feedback management and MPAs with KPFM2
 Run KPFM2 to assess outcomes with marine protected areas (MPAs) or feedback management (FBM)
 
-NB! Please refer to the READ ME for basic use of the Krill-Predator-Fishery Model (EmilyKlein/KPFM2) before using this guide!
+*NB: Please refer to the READ ME for basic use of the Krill-Predator-Fishery Model (EmilyKlein/KPFM2) before using this guide.*
 
 This file contains information on the (1) data input files, (2) code for analysis, and (3) steps in analysis used to obtain various results presented in several papers (see below), wherein KPFM2 was used to assess feedback management and marine protected areas. The analysis uses functions coded in [R] programming language, which is available for free download at https://www.r-project.org/ (this research used RStudio, https://www.rstudio.com/, to access the R software). For further background and reasoning regarding the model and its use, the reader is referred to:
 
@@ -10,89 +10,88 @@ Watters GM et al. (2013) Decision-making for ecosystem-based management: evaluat
 Additional README files are available at EmilyKlein/KPFM2_Climate_change to run the analyses and provide the figures found in Klein et al. (2018): Klein et al. (2018) “Climate-change impacts on prey increase risks for predators in the Scotia Sea”.
 
 
-(1) DATA INPUT FILES
+## (1) DATA INPUT FILES
 
-[mlt, mst, nlt, nst]: The four main .txt input for the KPFM2 ecosystem model, one for each parameterization1 across krill movement (no movement, n, and full movement as passive drifters, m) and predator sensitivity to krill availability (hyperstable, s, and linear, l). The parameterizations are run individually in KPFM2, and they have been updated with the most recent foraging information. 
+`[mlt, mst, nlt, nst]`: The four main .txt input for the KPFM2 ecosystem model, one for each parameterization1 across krill movement (no movement, n, and full movement as passive drifters, m) and predator sensitivity to krill availability (hyperstable, s, and linear, l). The parameterizations are run individually in KPFM2, and they have been updated with the most recent foraging information. 
 
-[mlt_D1, mst_D1, nlt_D1, nst_D1] and [mlt_US10, mst_US10, nlt_US10, nst_US10]: The four main .txt input for the Domain 1 MPA and the US10 MPA scenarios, respectively. These files are identical to the ones above, except for slight changes in the foraging matrices of predators resulting from assessments of foraging inside and outside of the MPA boundaries (the updated foraging information is available in the Klein and Watters MPA Supporting Information). 
+`[mlt_D1, mst_D1, nlt_D1, nst_D1]` and `[mlt_US10, mst_US10, nlt_US10, nst_US10]`: The four main .txt input for the Domain 1 MPA and the US10 MPA scenarios, respectively. These files are identical to the ones above, except for slight changes in the foraging matrices of predators resulting from assessments of foraging inside and outside of the MPA boundaries (the updated foraging information is available in the Klein and Watters MPA Supporting Information). 
 
-areas.D1, areas.D1.nompa, areas.US10, areas.US10.nompa: Matrix of values related to the number of pixels per original area (small scale management units, SSMUs) and if there is fishing there or not. Needed to pixelate original input into MPA pixels (see main text and Supporting Information for more on pixelation process). Note that the “.nompa” files are pixelated but allow fishing across all pixels (i.e. there is no MPA).  
+`areas.D1, areas.D1.nompa, areas.US10, areas.US10.nompa`: Matrix of values related to the number of pixels per original area (small scale management units, SSMUs) and if there is fishing there or not. Needed to pixelate original input into MPA pixels (see main text and Supporting Information for more on pixelation process). Note that the “.nompa” files are pixelated but allow fishing across all pixels (i.e. there is no MPA).  
 
-pixel.D1, pixel.D1.nompa, pixel.US10, pixel.US10.nompa: Matrix of values to better define the pixels per original area. Needed to pixelate original input into MPA pixels. Note that the “.nompa” files are pixelated but allow fishing across all pixels (i.e. there is no MPA).
+`pixel.D1, pixel.D1.nompa, pixel.US10, pixel.US10.nompa`: Matrix of values to better define the pixels per original area. Needed to pixelate original input into MPA pixels. Note that the “.nompa” files are pixelated but allow fishing across all pixels (i.e. there is no MPA).
 
-foraging.D1, foraging.US10: A list of values, that define how foraging is pixelated into the MPA from original spatial units (SSMUs). Needed to pixelate original input into MPA pixels.
+`foraging.D1, foraging.US10`: A list of values, that define how foraging is pixelated into the MPA from original spatial units (SSMUs). Needed to pixelate original input into MPA pixels.
 
-[GPRCP85CHL100]: Input files for driving krill gross growth potential (GGP) under a climate change scenario, in this case a IPCC Representative Control Pathway (RCPs) projection 8.5 (RCP 8.5). 
+`GPRCP85CHL100`: Input files for driving krill gross growth potential (GGP) under a climate change scenario, in this case a IPCC Representative Control Pathway (RCPs) projection 8.5 (RCP 8.5). 
 -	NB: The GGP input is for 93 years, therefore it needs to be either subset to a smaller number of years or the model needs to be run for the same number of years (93). 
+<br>
 
-(2) CODE FOR ANALYSIS
+## (2) CODE FOR ANALYSIS
 
 The analysis utilizes several functions, some of which call the ecosystem model (the Krill-Predator-Fishery Model, KPFM2) as described in Watters et al. (2013). Detail on KPFM2 is available in the documentation for that manuscript.
-  
-2.1 The base KPFM2 code
-load.funcs.r: Function to load and source all functions in a folder (use to easily get all necessary functions into the R workspace) 
-import.all.parameters.r: Function to load the KPFM2 input files (e.g., mlt, mst, nlt, nst). 
-ssmu.ss.r: The KPFM2 model, run in stochastic mode. Default plots are by SSMU and predator group for abundance and recruitment. This calls the additional functions: 
-allocate.catch.r: Generalized function to allocate catch among areas 
-bt.abund,var.r: Generates the variable bathtub krill abundances 
-m2f.root.r: Estimates root of catch equation 	
-plot.ss.C.r: Plots changes in catch when fishing is implemented.
-plot.ss.N.r: Plots changes in abundance of krill and predators)
-plot.ss.R.r: Plots changes in recruitment of krill and predators)
-ssmu.mc.r: Function to run Monte Carlo simulations of KPFM2. Default plots are by SSMU and predator group for abundance and recruitment, and this calls the following additional functions:
-plot.mc.C.r: Plots changes in catch when fishing is implemented.
-plot.mc.N.r: Plots changes in abundance of krill and predators)
-plot.mc.R.r: Plots changes in recruitment of krill and predators)
-compare.output.r: Aggregates species output across Monte Carlo simulations and for plotting. Runs the loop.pixel script for MPA output (see below). 
-compare.catch.r: Aggregates catch output across Monte Carlo simulations and for plotting. Runs the loop.pixel script for MPA output (see below). 
+<br>
 
+### 2.1 The base KPFM2 code
+`load.funcs.r`: Function to load and source all functions in a folder (use to easily get all necessary functions into the R workspace) 
+`import.all.parameters.r`: Function to load the KPFM2 input files (e.g., mlt, mst, nlt, nst). 
+`ssmu.ss.r`: The KPFM2 model, run in stochastic mode. Default plots are by SSMU and predator group for abundance and recruitment. This calls the additional functions: 
+`allocate.catch.r`: Generalized function to allocate catch among areas 
+`bt.abund,var.r`: Generates the variable bathtub krill abundances 
+`m2f.root.r`: Estimates root of catch equation 	
+`plot.ss.C.r`: Plots changes in catch when fishing is implemented.
+`plot.ss.N.r`: Plots changes in abundance of krill and predators)
+`plot.ss.R.r`: Plots changes in recruitment of krill and predators)
+`ssmu.mc.r`: Function to run Monte Carlo simulations of KPFM2. Default plots are by SSMU and predator group for abundance and recruitment, and this calls the following additional functions:
+`plot.mc.C.r`: Plots changes in catch when fishing is implemented.
+`plot.mc.N.r`: Plots changes in abundance of krill and predators)
+`plot.mc.R.r`: Plots changes in recruitment of krill and predators)
+<br>
 
+### 2.2 Code for Monte Carlo trials and running across scenarios
+`main.r`: Function to run either or both Monte Carlo simulations across multiple scenarios and risk assessment. If designated by the user, this can call the following functions: 
+`run.mcsims.r` (if runmcsims=TRUE)
+	`assess.risk.predators.r` (if runassessment=TRUE)
+	`assess.krill.fishery.r` (if runassessment=TRUE)
+	`assess.regional.krill.r` (if runassessment=TRUE)
 
-2.2 Code for Monte Carlo trials and running across scenarios
-main.r: Function to run either or both Monte Carlo simulations across multiple scenarios and risk assessment. If designated by the user, this can call the following functions: 
-run.mcsims.r (if runmcsims=TRUE)
-	assess.risk.predators.r (if runassessment=TRUE)
-	assess.krill.fishery.r (if runassessment=TRUE)
-	assess.regional.krill.r (if runassessment=TRUE)
+`run.mcsims.r`: Runs Monte Carlo simulations over multiple fishing scenarios and parameterizations. Calls the following function: 
+	`get.gamma.fractions.r`
+	`ssmu.ss.r` 
+	`ssmu.ss.mc.r` 
+	`assess.risk.predators.r`: Risk assessment for the predator groups across multiple fishing options and parameterizations; averages output across parameterizations. Calls the following functions:
+	`calc.risk.predators.r`: Calculates depletion risks for predator groups. This code calls the script 
+	`merge.mc.r`: Aggregates output across Monte Carlo trials into a single output
+	`relative.mc.r`: Makes one Monte Carlo trial output object relative to others. 
 
-run.mcsims.r: Runs Monte Carlo simulations over multiple fishing scenarios and parameterizations. Calls the following function: 
-get.gamma.fractions.r
-	ssmu.ss.r 
-ssmu.ss.mc.r 
-assess.risk.predators.r: Risk assessment for the predator groups across multiple fishing options and parameterizations; averages output across parameterizations. Calls the following functions:
-calc.risk.predators.r: Calculates depletion risks for predator groups. This code calls the script 
-get.gamma.fractions.r 
-merge.mc.r: Aggregates output across Monte Carlo trials into a single output
-relative.mc.r: Makes one Monte Carlo trial output object relative to others. 
+`assess.krill.fishery.r`: Performance assessment of the fishery in terms of krill catch over multiple fishing scenarios and parameterizations; averages output across parameterizations. Calls the functions: 
+	`calc.pms.krill.fishery.r`: Calculates performance measures for krill and the fishery.
+	`get.gamma.fractions.r`
+	`merge.mc.r`
 
-assess.krill.fishery.r: Performance assessment of the fishery in terms of krill catch over multiple fishing scenarios and parameterizations; averages output across parameterizations. Calls the functions: 
-calc.pms.krill.fishery.r: Calculates performance measures for krill and the fishery.
-get.gamma.fractions.r 
-merge.mc.r
+`assess.regional.krill.r` : Computes regional krill performance measures; averages output across parameterizations. Calls the following functions:
+	`calc.pms.regional.krill.r` 
+	`calc.regional.krill.mc.r`
+	`get.gamma.fractions.r`
+	`merge.regional.krill.mc.r`
+	`relative.regional.krill.mc.r`
+<br>
 
-assess.regional.krill.r: : Computes regional krill performance measures; averages output across parameterizations. Calls the following functions:
-calc.pms.regional.krill.r 
-calc.regional.krill.mc.r
-get.gamma.fractions.r
-merge.regional.krill.mc.r
-relative.regional.krill.mc.r
+### 2.3. Code for decomposing original KPFM2 for marine protected area scenarios
 
+`main.pixel()`: Function to run simulations of the KPFM2 ecosystem model (described in Watters et al. 2013) across Monte Carlo trials and yield multipliers for risk assessment. This calls the `runmcsims()`, which runs the KPFM2 simulations across the number of Monte Carlo trials and yield multipliers specified by the analyst. 
 
-2.3. Code for decomposing original KPFM2 for marine protected area scenarios
-main.pixel(): Function to run simulations of the KPFM2 ecosystem model (described in Watters et al. 2013) across Monte Carlo trials and yield multipliers for risk assessment. This calls the runmcsims(), which runs the KPFM2 simulations across the number of Monte Carlo trials and yield multipliers specified by the analyst. 
+The risk assessment process here requires the analyst to update several things in the `main.pixel()` code so that all scenarios are run, including those needed for the pixelation adjustment (manuscript Supporting Information). The primary input for the code is  
 
-The risk assessment process here requires the analyst to update several things in the main.pixel() code so that all scenarios are run, including those needed for the pixelation adjustment (manuscript Supporting Information). The primary input for the code is  
-
-main.pixel<-function(
-input.objects=c(“mst”, “mlt”, “nst”, “nlt”) The input data files for parameterizations described above
-fishing.options=c(0,1)  One simulation without fishing (0) and one with fishing according to current distributions (1)
-runassessment=TRUE Whether or not to run assessments on the output data
-runmcsims=TRUE Whether or not to run Monte Carlo trials
-areas=[input data] One of the areas.[] input files described above, depending on MPA scenario 
-pixels=[input data] One of the pixel.[] input files described above, depending on MPA scenario 
-foraging.list=[input data] One of the foraging.[] input files described above, depending on MPA scenario 
-parameter.path=””  Parameter path for location of input.objects above
-output.file.path=”” 	 Parameter path for output objects
+`main.pixel<-function(
+`input.objects`=c(“mst”, “mlt”, “nst”, “nlt”) The input data files for parameterizations described above
+`fishing.options`=c(0,1)  One simulation without fishing (0) and one with fishing according to current distributions (1)
+`runassessment`=TRUE Whether or not to run assessments on the output data
+`runmcsims`=TRUE Whether or not to run Monte Carlo trials
+`areas`=[input data] One of the areas.[] input files described above, depending on MPA scenario 
+`pixels`=[input data] One of the pixel.[] input files described above, depending on MPA scenario 
+`foraging.list`=[input data] One of the foraging.[] input files described above, depending on MPA scenario 
+`parameter.path`=””  Parameter path for location of input.objects above
+`output.file.path`=”” 	 Parameter path for output objects
 
 This script calls the following additional functions: 
 run.mcsims.pixel(): If called, the code for running Monte Carlo trials of KPFM2. 
