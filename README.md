@@ -174,15 +174,14 @@ nyears <- 93    	[number of years for the model to run; NB this must be 93 to us
 start.fishing.yr <- 1  	  [when to start fishing]
 stop.fishing.yr <- NULL	  [when to stop fishing]
   ```
-   1. Klein and Watters only ran the model for gamma = 1.0; open the get.gamma.fractions.r script and make sure it is set for this only, i.e.: 
+   1. Klein and Watters only ran the model for gamma = 1.0; open the `get.gamma.fractions.r` script and make sure it is set for this only, i.e.: 
 ```
-# gamma.fractions <- c(0.02, 0.04, 0.06, 0.08, 0.1, 0.11…
 gamma.fractions <- 1.0
 ```
  2. Run the “No FBM” scenario: 
     2. In main(), make sure the code is set to turn off reassessment, line 34: 
-reassessment.interval.yr <- NULL
-b.	Save, source, and run the model via main(runassessments=FALSE)
+`reassessment.interval.yr <- NULL`
+    2. Save, source, and run the model via main(runassessments=FALSE)
 i.	Output will be saved in the location designated by “output.file.path”.
 c.	Rename the output folder to denote it as output from the No FBM base case. 
 3.	Run the “FBM” scenario
